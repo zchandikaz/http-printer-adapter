@@ -42,11 +42,10 @@ public class EpsonTmService(HttpPrinterConfig httpPrinterConfig, AbstractPhysica
 
             // Console.WriteLine(request.ToString());
 
-            Base64ToImage(request.Image.Value, request.Image.Width, request.Image.Height, "output_image.png");
-            // printDoc();
+            Image image=  Base64ToImage(request.Image.Value, request.Image.Width, request.Image.Height);
             
-            physicalPrinter.Print(new PrintObject());
-            
+            physicalPrinter.Print(new PrintObject(image));
+
             return response;
         }
         catch (Exception ex)
@@ -57,84 +56,75 @@ public class EpsonTmService(HttpPrinterConfig httpPrinterConfig, AbstractPhysica
         return response;
     }
 
-    private void printDoc()
+    private static Image Base64ToImage(string base64String, int width, int height, string mode = "mono", string align = "left")
     {
-        PrintDocument printDocument = new PrintDocument();
-        printDocument.PrinterSettings.PrinterName = "POS-80-Series"; // Set the custom printer name here
-        printDocument.PrintPage += new PrintPageEventHandler(PrintImage);
-        printDocument.Print();
-    }
-
-    private void PrintImage(object sender, PrintPageEventArgs e)
-    {
-        Image image = Image.FromFile("D:\\Work\\dev\\infact\\printer-adapter\\output_image.png");
-
-        // Target width in mm
-        float targetWidthMM = 80f;
-
-        // Convert mm to pixels (assuming 96 DPI)
-        float dpi = 96f;
-        float mmPerInch = 25.4f;
-        float targetWidthPixels = (targetWidthMM / mmPerInch) * dpi;
-
-        // Calculate the aspect ratio and new height
-        float aspectRatio = (float)image.Height / image.Width;
-        int targetHeightPixels = (int)(targetWidthPixels * aspectRatio);
-
-        // Resize the original image
-        Bitmap resizedImage = new Bitmap(image, new Size((int)targetWidthPixels, targetHeightPixels));
-
-        // Create a new bitmap with the same dimensions as the resized image
-        Bitmap invertedImage = new Bitmap(resizedImage.Width, resizedImage.Height);
-
-        // Create a graphics object from the bitmap
-        using (Graphics g = Graphics.FromImage(invertedImage))
+        try
         {
-            // Create color matrix to invert colors
-            ColorMatrix colorMatrix = new ColorMatrix(
-                new float[][]
-                {
-                    new float[] { -1, 0, 0, 0, 0 },
-                    new float[] { 0, -1, 0, 0, 0 },
-                    new float[] { 0, 0, -1, 0, 0 },
-                    new float[] { 0, 0, 0, 1, 0 },
-                    new float[] { 1, 1, 1, 0, 1 }
-                });
+            // Decode base64 string to byte array
+            byte[] imageData = Convert.FromBase64String(base64String);
 
-            // Create image attributes and set the color matrix
-            ImageAttributes attributes = new ImageAttributes();
-            attributes.SetColorMatrix(colorMatrix);
+            // Create a bitmap object
+            Bitmap image = new Bitmap(width, height);
 
-            // Draw the resized image on the new bitmap, applying the color matrix
-            g.DrawImage(resizedImage, new Rectangle(0, 0, resizedImage.Width, resizedImage.Height),
-                0, 0, resizedImage.Width, resizedImage.Height, GraphicsUnit.Pixel, attributes);
+            // Determine mode (mono or palette-based)
+            if (mode == "mono")
+            {
+                // Mono mode: 1-bit per pixel
+                SetMonoImage(image, imageData);
+            }
+            else
+            {
+                // Palette mode: 16 colors (indexed color)
+                SetPaletteImage(image, imageData);
+            }
+
+            // Optional: Align handling (not implemented in this example)
+            if (align != "left")
+            {
+                Console.WriteLine($"Alignment '{align}' is requested, but not implemented. Default to 'left'.");
+            }
+
+            return image;
         }
-
-        // Draw the inverted image on the PrintPageEventArgs
-        Point location = new Point(0, 0);
-        e.Graphics.DrawImage(invertedImage, location);
+        catch (Exception ex)
+        {
+            throw new Exception($"Exception in Base64ToImage", ex);
+        }
     }
 
-    public void Base64ToImage(string base64String, int width, int height, string filePath, string mode = "left",
-        string align = "center", string color = "color_1")
+    private static void SetMonoImage(Bitmap image, byte[] imageData)
     {
-        // Convert base64 string to byte array
-        byte[] imageBytes = Convert.FromBase64String(base64String.Trim());
-
-        // Load the byte array into a MemoryStream
-        using (var ms = new MemoryStream(imageBytes))
+        int index = 0;
+        for (int y = 0; y < image.Height; y++)
         {
-            // Create an image from the byte array
-            Image image = Image.FromStream(ms);
+            for (int x = 0; x < image.Width; x++)
+            {
+                // Set pixel based on the imageData (1-bit pixel depth)
+                bool isSet = (imageData[index / 8] & (1 << (7 - (index % 8)))) != 0;
+                image.SetPixel(x, y, isSet ? Color.Black : Color.White);
+                index++;
+            }
+        }
+    }
 
-            // Resize the image
-            Bitmap resizedImage = new Bitmap(image, new Size(width, height));
+    private static void SetPaletteImage(Bitmap image, byte[] imageData)
+    {
+        Color[] palette =
+        {
+            Color.Black, Color.Red, Color.Green, Color.Blue,
+            Color.Yellow, Color.Magenta, Color.Cyan, Color.White,
+            Color.Gray, Color.Brown, Color.Purple, Color.Orange,
+            Color.Pink, Color.LightBlue, Color.LightGreen, Color.LightGray
+        };
 
-            // Additional logic to handle 'mode', 'align', and 'color'
-            // For simplicity, we are assuming center alignment and color_1 as default for complexity
-
-            // Save the final image to a file
-            resizedImage.Save(filePath, ImageFormat.Png);
+        int index = 0;
+        for (int y = 0; y < image.Height; y++)
+        {
+            for (int x = 0; x < image.Width; x++)
+            {
+                int colorIndex = imageData[index++] % palette.Length;
+                image.SetPixel(x, y, palette[colorIndex]);
+            }
         }
     }
 }
