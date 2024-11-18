@@ -9,6 +9,7 @@ using http_printer_adapter.Api.Http;
 using http_printer_adapter.Api.Physical;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 namespace http_printer_adapter.Impl.Printer.Http.EpsonTm;
@@ -33,14 +34,22 @@ public class EpsonTmHttpPrinter(HttpPrinterConfig httpPrinterConfig, AbstractPhy
                 .ConfigureServices(services =>
                 {
                     services.AddServiceModelServices();
+                    
+                    services.AddSingleton<HttpPrinterConfig>(httpPrinterConfig);
+                    services.AddSingleton<AbstractPhysicalPrinter>(physicalPrinter);                   
+                    
                     services.AddSingleton<IServiceBehavior, ServiceDebugBehavior>(serviceProvider =>
                     {
                         var debugBehavior = new ServiceDebugBehavior { IncludeExceptionDetailInFaults = true };
                         return debugBehavior;
                     });
+                    
+                    services.AddSingleton<EpsonTmService>();
                 })
                 .Configure(app =>
                 {
+                    app.UseMiddleware<ContentTypeTransformMiddleware>();
+                    
                     var binding = new BasicHttpBinding();
                     app.UseServiceModel(builder =>
                     {
@@ -49,8 +58,7 @@ public class EpsonTmHttpPrinter(HttpPrinterConfig httpPrinterConfig, AbstractPhy
                     });
                 })
                 .Build();
-
-            // _host.Start();
+            
             await _host.RunAsync();
             Console.WriteLine("CoreWCF SOAP Service is running...");
         }
@@ -58,5 +66,14 @@ public class EpsonTmHttpPrinter(HttpPrinterConfig httpPrinterConfig, AbstractPhy
         {
             Console.WriteLine($"Exception in EposPrint: {ex}");
         }
+    }
+}
+
+public class ContentTypeTransformMiddleware(RequestDelegate next)
+{
+    public async Task InvokeAsync(HttpContext context)
+    {
+        context.Request.ContentType = "text/xml; charset=utf-8";
+        await next(context);
     }
 }

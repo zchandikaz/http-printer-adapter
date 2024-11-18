@@ -9,7 +9,7 @@
       },
       "HttpPrinter": {
         "Port": 10001,
-        "Host": "localhost",
+        "Host": "0.0.0.0",
         "Type": "EPSON_TM"
       }
     },

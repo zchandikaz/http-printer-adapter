@@ -8,6 +8,6 @@ public class Pos80PhysicalPrinter(PhysicalPrinterConfig physicalPrinterConfig) :
 {
     public override void Print(PrintObject printObject)
     {
-        throw new NotImplementedException();
+        Console.WriteLine("printed!");
     }
 }
