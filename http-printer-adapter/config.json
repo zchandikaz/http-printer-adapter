@@ -6,8 +6,7 @@
         "Type": "POS_80",
         "Width": 80.0,
         "ExtraProperties": {
-          "dpi": 96.0,
-          "mmPerInch": 25.4
+          "dpi": "96.0"
         }
       },
       "HttpPrinter": {
@@ -20,16 +19,15 @@
       "PhysicalPrinter": {
         "Name": "Microsoft Print to PDF",
         "Type": "POS_80",
-        "Width": 80.0
+        "Width": 80.0,
+        "ExtraProperties": {
+          "dpi": "96.0"
+        }
       },
       "HttpPrinter": {
         "Port": 10002,
         "Host": "localhost",
         "Type": "EPSON_TM"
-      },
-      "ExtraProperties": {
-        "dpi": 96.0,
-        "mmPerInch": 25.4
       }
     }
   ]

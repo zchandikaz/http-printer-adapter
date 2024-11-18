@@ -6,7 +6,7 @@ namespace http_printer_adapter.Api.Config;
 public record PhysicalPrinterConfig
 {
     [JsonConstructor]
-    public PhysicalPrinterConfig(string name, PhysicalPrinterType type, float width, Dictionary<string, object> extraProperties)
+    public PhysicalPrinterConfig(string name, PhysicalPrinterType type, float width, Dictionary<string, string> extraProperties)
     {
         Name = name;
         Type = type;
@@ -30,7 +30,7 @@ public record PhysicalPrinterConfig
     /// </summary>
     public float Width { get; init; }
     
-    public Dictionary<string, object> ExtraProperties { get; init; } = new();
+    public Dictionary<string, string> ExtraProperties { get; init; } = new();
     
     public override string ToString()
     {

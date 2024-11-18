@@ -20,10 +20,10 @@ public class Pos80PhysicalPrinter(PhysicalPrinterConfig physicalPrinterConfig)
 
             // Target width in mm
             float targetWidthMM = physicalPrinterConfig.Width;
-
+            
             // Convert mm to pixels (assuming 96 DPI)
-            float dpi = (float)(physicalPrinterConfig?.ExtraProperties?["dpi"] ?? 96f);
-            float mmPerInch = (float)(physicalPrinterConfig?.ExtraProperties?["mmPerInch"] ?? 25.4f);
+            float dpi = float.TryParse(physicalPrinterConfig?.ExtraProperties?.TryGetValue("dpi", out string dpiString)??false ? dpiString : "96", out float result) ? result : 96f;
+            float mmPerInch =  25.4f;
 
             float targetWidthPixels = (targetWidthMM / mmPerInch) * dpi;
 
