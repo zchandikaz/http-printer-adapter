@@ -1,0 +1,16 @@
+{
+  "PrinterMappings": [
+    {
+      "PhysicalPrinter": {
+        "Name": "POS-80-Series",
+        "Type": "POS_80",
+        "Width": 210.0,
+        "Height": 297.0
+      },
+      "HttpPrinter": {
+        "Port": 1100,
+        "Type": "EPSON_TM"
+      }
+    }
+  ]
+}
