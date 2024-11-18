@@ -1,6 +1,8 @@
-﻿namespace http_printer_adapter.Config;
+﻿using System.Drawing;
+
+namespace http_printer_adapter.Config;
 
 public class PrintObject
 {
-    
+    Image Image { get; set; }
 }

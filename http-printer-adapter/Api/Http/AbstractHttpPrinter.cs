@@ -7,5 +7,5 @@ public abstract class AbstractHttpPrinter(HttpPrinterConfig httpPrinterConfig, A
 {
     protected AbstractPhysicalPrinter PhysicalPrinter = physicalPrinter;
 
-    public abstract void Start();
+    public abstract Task Start();
 }

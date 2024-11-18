@@ -2,6 +2,7 @@
 using http_printer_adapter.Api.Http;
 using http_printer_adapter.Api.Physical;
 using http_printer_adapter.Impl.Printer.Http;
+using http_printer_adapter.Impl.Printer.Http.EpsonTm;
 
 namespace http_printer_adapter.Config;
 

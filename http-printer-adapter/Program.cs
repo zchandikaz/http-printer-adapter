@@ -6,14 +6,19 @@ var configJson = File.ReadAllText("E:\\dev\\vs\\http-printer-adapter\\http-print
 
 var adapterConfig = JsonSerializer.Deserialize<AdapterConfig>(configJson);
 
+List<Task> tasks = new();
 if (adapterConfig != null)
 {
     foreach (var adapterConfigPrinterMapping in adapterConfig.PrinterMappings)
     {
         var physicalPrinter = PrinterFactory.CreatePhysicalPrinter(adapterConfigPrinterMapping.PhysicalPrinter);
         var httpPrinter = PrinterFactory.CreateHttpPrinter(adapterConfigPrinterMapping.HttpPrinter, physicalPrinter);
-        httpPrinter.Start();
+        Task task = httpPrinter.Start();
+        tasks.Add(task);
     }
+}
 
-    Console.WriteLine(adapterConfig); // Output: Person { FirstName 
+foreach (var task in tasks)
+{
+    task.Wait();
 }

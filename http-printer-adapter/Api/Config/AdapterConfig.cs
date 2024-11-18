@@ -44,9 +44,10 @@ public record PhysicalPrinterConfig
 public record HttpPrinterConfig
 {
     [JsonConstructor]
-    public HttpPrinterConfig(int port, HttpPrinterType type)
+    public HttpPrinterConfig(int port, string host, HttpPrinterType type)
     {
         this.Port = port;
+        this.Host = host;
         this.Type = type;
     }
 
@@ -54,6 +55,11 @@ public record HttpPrinterConfig
     /// Http port
     /// </summary>
     public int Port { get; init; }
+
+    /// <summary>
+    /// Http host
+    /// </summary>
+    public string Host { get; init; }
 
     /// <summary>
     /// Printer Type
