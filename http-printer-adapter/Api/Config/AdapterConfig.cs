@@ -6,12 +6,12 @@ namespace http_printer_adapter.Api.Config;
 public record PhysicalPrinterConfig
 {
     [JsonConstructor]
-    public PhysicalPrinterConfig(string name, PhysicalPrinterType type, float width, float height)
+    public PhysicalPrinterConfig(string name, PhysicalPrinterType type, float width, Dictionary<string, object> extraProperties)
     {
         Name = name;
         Type = type;
         Width = width;
-        Height = height;
+        ExtraProperties = extraProperties;
     }
 
     /// <summary>
@@ -26,18 +26,15 @@ public record PhysicalPrinterConfig
     public PhysicalPrinterType Type { get; init; }
 
     /// <summary>
-    /// Height in  Millimeter
-    /// </summary>
-    public float Width { get; init; }
-
-    /// <summary>
     /// Width in  Millimeter
     /// </summary>
-    public float Height { get; init; }
-
+    public float Width { get; init; }
+    
+    public Dictionary<string, object> ExtraProperties { get; init; } = new();
+    
     public override string ToString()
     {
-        return $"PhysicalPrinterConfig(Name: {Name}, Type: {Type}, Width: {Width}, Height: {Height})";
+        return $"PhysicalPrinterConfig(Name: {Name}, Type: {Type}, Width: {Width})";
     }
 }
 

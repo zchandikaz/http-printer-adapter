@@ -4,26 +4,32 @@
       "PhysicalPrinter": {
         "Name": "POS-80-Series",
         "Type": "POS_80",
-        "Width": 210.0,
-        "Height": 297.0
+        "Width": 80.0,
+        "ExtraProperties": {
+          "dpi": 96.0,
+          "mmPerInch": 25.4
+        }
       },
       "HttpPrinter": {
         "Port": 10001,
-        "Host": "0.0.0.0",
+        "Host": "localhost",
         "Type": "EPSON_TM"
       }
     },
     {
       "PhysicalPrinter": {
-        "Name": "POS-80-Series 1",
+        "Name": "Microsoft Print to PDF",
         "Type": "POS_80",
-        "Width": 210.0,
-        "Height": 297.0
+        "Width": 80.0
       },
       "HttpPrinter": {
         "Port": 10002,
         "Host": "localhost",
         "Type": "EPSON_TM"
+      },
+      "ExtraProperties": {
+        "dpi": 96.0,
+        "mmPerInch": 25.4
       }
     }
   ]

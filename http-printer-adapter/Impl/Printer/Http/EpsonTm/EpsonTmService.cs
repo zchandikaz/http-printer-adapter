@@ -20,40 +20,27 @@ public class EpsonTmService(HttpPrinterConfig httpPrinterConfig, AbstractPhysica
 
     public EposPrintResponse EposPrint(EposPrintRequest request)
     {
-        var response = new EposPrintResponse
-        {
-            Success = true, // set based on your logic
-            Code = "", // set based on your logic
-            Status = "252641302", // set based on your logic
-            Battery = 0 // set based on your logic
-        };
+        bool success = false;
         try
         {
-            // Process the request here.
-            // Implement your logic and populate the response.
-
-            // var response = new EposPrintResponse
-            // {
-            //     Success = true, // set based on your logic
-            //     Code = "", // set based on your logic
-            //     Status = "252641302", // set based on your logic
-            //     Battery = 0 // set based on your logic
-            // };
-
-            // Console.WriteLine(request.ToString());
-
             Image image=  Base64ToImage(request.Image.Value, request.Image.Width, request.Image.Height);
             
             physicalPrinter.Print(new PrintObject(image));
 
-            return response;
+            success = true;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Exception in EposPrint: {ex.ToString()}");
         }
 
-        return response;
+        return new EposPrintResponse
+        {
+            Success = success, 
+            Code = "", 
+            Status = "252641302", 
+            Battery = 0 
+        };
     }
 
     private static Image Base64ToImage(string base64String, int width, int height, string mode = "mono", string align = "left")

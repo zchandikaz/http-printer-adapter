@@ -2,7 +2,8 @@
 using http_printer_adapter.Api.Config;
 using http_printer_adapter.Config;
 
-var configJson = File.ReadAllText("E:\\dev\\vs\\http-printer-adapter\\http-printer-adapter\\config.json");
+string configPath = args.Length > 0 ? args[0] : "config.json";
+var configJson = File.ReadAllText(configPath);
 
 var adapterConfig = JsonSerializer.Deserialize<AdapterConfig>(configJson);
 
